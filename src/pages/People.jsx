@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 
 const People = (props) => {
     // const initialState = []
@@ -52,11 +53,12 @@ const People = (props) => {
             // 3. make fetch to B/E - sending data (requestOptions)
             // 3a. fetch sends the data to API - (mongo)
             const response = await fetch(BASE_URL, requestOptions)
+            // console.log(response)
             // 4. check our response
             // 5. parse the data from the response into JS (from JSON)
             const createdPerson = await response.json()
             // update local state with response (json from BackEnd)
-            setPeople(...people, createdPerson)
+            setPeople([...people, createdPerson])
             // reset form state so that our form empties out
             setForm({
                 name: "",
@@ -72,14 +74,16 @@ const People = (props) => {
     const loaded = () => {
         return people?.map((person) => {
             return (
-                <div key={person._id}>
-                    <h1>{person.name}</h1>
-                    <img
-                        src={person.image}
-                        alt={person.name}
-                    />
-                    <h3>{person.title}</h3>
-                </div>
+                <Link  key={person._id} to={`/people/${person._id}`}>
+                    <div className="person-card">
+                        <h1>{person.name}</h1>
+                        <img
+                            src={person.image}
+                            alt={person.name}
+                        />
+                        <h3>{person.title}</h3>
+                    </div>
+                </Link>
             )
         })
     }

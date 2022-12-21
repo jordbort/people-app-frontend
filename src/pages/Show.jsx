@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams, Link, useNavigate } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 
 const Show = (props) => {
     const navigate = useNavigate()
@@ -8,18 +8,61 @@ const Show = (props) => {
     const [person, setPerson] = useState(null)
     const [loading, setLoading] = useState(true)
     // access information about the current url path for browser
-    const {id} = useParams()
-    const URL = `http://localhost:4000/people/${id}`
+    const { id } = useParams()
+    // fetch endpoint
+    const URL = `https://jb-people-app-demo.herokuapp.com/people/${id}`
+
+
+
+    // const [people, setPeople] = useState([])
+    const [newForm, setForm] = useState({
+        name: "",
+        image: "",
+        title: "",
+    })
+
+
+    const handleChange = (event) => {
+        const prevInput = { ...newForm }
+        // console.log(event.target.name, event.target.value)
+        prevInput[event.target.name] = event.target.value
+        setForm(prevInput)
+    }
+
+    // fetch endpoint
+    const handleEdit = async (event) => {
+        event.preventDefault()
+        try {
+            const requestOptions = {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newForm)
+            }
+            await fetch(URL, requestOptions)
+            getPerson()
+            setForm({
+                name: "",
+                image: "",
+                title: ""
+            })
+        }
+        catch (err) {
+            console.error(err)
+        }
+    }
+
 
     const getPerson = async () => {
         try {
             const response = await fetch(URL)
             const result = await response.json()
-            // console.log(result)
+            console.log(`Get person:`, result)
             setPerson(result)
             setLoading(false)
         }
-        catch(err) {
+        catch (err) {
             console.error(err)
         }
     }
@@ -33,10 +76,10 @@ const Show = (props) => {
             // make a fetch (delete)
             const response = await fetch(URL, options)
             const deletedPerson = await response.json()
-            // console.log(deletedPerson)
+            console.log(deletedPerson)
             navigate(`/`)
         }
-        catch(err) {
+        catch (err) {
             console.error(err)
             // stretch goal - print the error message on the page for the user
         }
@@ -50,13 +93,56 @@ const Show = (props) => {
 
     return (
         <section>
-            {loading ? <h1>Loading...</h1> : 
+            {loading ? <h1>Loading...</h1> :
                 <>
                     <button className="delete" onClick={removePerson}>Delete person</button>
                     <h1>Name: {person.name} - {person.title}</h1>
                     <img src={person.image || placeholderImage} alt="pls stop" />
+                    <section className="people-list">
+                        <h1>Edit {person.name}</h1>
+                        <form onSubmit={handleEdit}>
+                            <label htmlFor="name">
+                                Name
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    placeholder="Enter name"
+                                    value={newForm.name}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </label>
+                            <br />
+                            <label htmlFor="image">
+                                Image
+                                <input
+                                    type="text"
+                                    id="image"
+                                    name="image"
+                                    placeholder="Enter image URL"
+                                    value={newForm.image}
+                                    onChange={handleChange}
+                                />
+                            </label>
+                            <br />
+                            <label htmlFor="title">
+                                Title
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    placeholder="Enter person's title"
+                                    value={newForm.title}
+                                    onChange={handleChange}
+                                />
+                            </label>
+                            <br />
+                            <button className="edit" type="submit" onClick={handleEdit}>Edit person</button>
+                        </form>
+                    </section>
                 </>
-                }
+            }
         </section>
     )
 }

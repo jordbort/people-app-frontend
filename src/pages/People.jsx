@@ -11,7 +11,7 @@ const People = (props) => {
         title: "",
     })
     // fetch endpoint
-    const BASE_URL = "http://localhost:4000/people"
+    const BASE_URL = "https://jb-people-app-demo.herokuapp.com/people"
 
     const getPeople = async () => {
         try {
@@ -116,9 +116,10 @@ const People = (props) => {
                                     type="text"
                                     id="name"
                                     name="name"
-                                    placeholder="enter a person's name"
+                                    placeholder="Enter person's name"
                                     value={newForm.name}
                                     onChange={handleChange}
+                                    required
                                 />
                             </label>
                             <br />
@@ -128,7 +129,7 @@ const People = (props) => {
                                     type="text"
                                     id="image"
                                     name="image"
-                                    placeholder="person's image URL"
+                                    placeholder="Person's image URL"
                                     value={newForm.image}
                                     onChange={handleChange}
                                 />
@@ -140,7 +141,7 @@ const People = (props) => {
                                     type="text"
                                     id="title"
                                     name="title"
-                                    placeholder="enter a person's title"
+                                    placeholder="Enter person's title"
                                     value={newForm.title}
                                     onChange={handleChange}
                                 />
